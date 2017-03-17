@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Translate</string>
+    <string name="api_initialization_error">Error occurred while translator initialization</string>
 </resources>

@@ -19,7 +19,7 @@ public class YandexTranslatorAPI extends TranslatorAPI {
     @Override
     public void initialize() throws APIException {
         String response = HttpSenderManager.getHttpSender().post(
-            new String("https://translate.yandex.net/api/v1.5/tr/getLangs?ui=%1&key=%2")
+            new String("https://translate.yandex.net/api/v1.5/tr.json/getLangs?ui=%1&key=%2")
                 .replace("%1", interfaceLanguageKey)
                 .replace("%2", key));
         try {
@@ -30,16 +30,18 @@ public class YandexTranslatorAPI extends TranslatorAPI {
             }
             // В противном случае парсим ответ
             else {
-                Iterator<String> keys = obj.getJSONObject("langs").keys();
+                JSONObject langs = obj.getJSONObject("langs");
+                Iterator<String> keys = langs.keys();
                 String curKey;
                 while (keys.hasNext()) {
                     curKey = keys.next();
-                    supportedLanguages.put(curKey, obj.getString(curKey));
+                    supportedLanguages.put(curKey, langs.getString(curKey));
                 }
+                initialized = true;
             }
         }
         catch (JSONException e) {
-            Log.e("JSON PARSING EXCEPTION", e.getMessage());
+            Log.e("JSON PARSING", e.getMessage());
         }
     }
 }
