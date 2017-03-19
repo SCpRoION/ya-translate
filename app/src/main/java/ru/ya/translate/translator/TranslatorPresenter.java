@@ -64,4 +64,8 @@ public class TranslatorPresenter implements Presenter {
     public void onDestroy() {
 
     }
+
+    public void inputTextChanged(String newText) {
+        Log.d("Input", newText);
+    }
 }
