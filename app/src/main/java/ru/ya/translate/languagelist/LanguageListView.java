@@ -12,4 +12,11 @@ public interface LanguageListView {
      * @param languages список языков
      */
     void showLanguageList(List<String> languages);
+
+    /**
+     * Отправить информацию о выбранном языке активности переводчика
+     * @param newLanguageKey ключ нового выбранного языка
+     * @param newLanguageTitle название нового выбранного языка
+     */
+    void sendNewLanguageToTranslator(String newLanguageKey, String newLanguageTitle);
 }

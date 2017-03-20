@@ -11,4 +11,10 @@ public interface TranslatorView {
      * @param messageId идентификатор сообщения из строковых ресурсов
      */
     void showToast(int messageId);
+
+    /**
+     * Установить перевод
+     * @param translation перевод текста
+     */
+    void setTranslation(String translation);
 }

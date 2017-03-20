@@ -10,7 +10,7 @@ import java.util.Map;
 public abstract class TranslatorAPI {
 
     protected Map<String, String> supportedLanguages; /** Поддерживаемые языки */
-    protected boolean initialized = false;               /** Флаг инициализации */
+    protected boolean initialized = false;            /** Флаг инициализации */
 
     // В рамках тестового задания, я надеюсь, нет необходимости поддерживать мультиязычный интерфейс,
     // поэтому я ограничусь русским и помещу ключ сюда, хотя, конечно, ему место не совсем здесь.
@@ -40,6 +40,20 @@ public abstract class TranslatorAPI {
      */
     public Collection<String> supportedLanguages() {
         return supportedLanguages.values();
+    }
+
+    /**
+     * Получить ключ языка по его названию
+     * @param languageTitle название языка
+     * @return ключ языка
+     */
+    public String getLanguageKey(String languageTitle) {
+        for (Map.Entry<String, String> entry : supportedLanguages.entrySet()) {
+            if (languageTitle.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     /**

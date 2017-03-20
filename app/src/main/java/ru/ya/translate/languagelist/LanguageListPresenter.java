@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ru.ya.translate.Presenter;
+import ru.ya.translate.translator.TranslatorActivity;
 import ru.ya.translate.translator.api.TranslatorAPIManager;
 
 /**
@@ -38,5 +39,14 @@ public class LanguageListPresenter implements Presenter {
     @Override
     public void onDestroy() {
 
+    }
+
+    /**
+     * Выбран новый язык из перечня
+     * @param languageTitle новый выбранный язык
+     */
+    public void newLanguageSelected(String languageTitle) {
+        String languageKey = TranslatorAPIManager.getTranslationAPI().getLanguageKey(languageTitle);
+        view.sendNewLanguageToTranslator(languageKey, languageTitle);
     }
 }

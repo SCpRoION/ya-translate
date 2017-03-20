@@ -13,7 +13,9 @@ import ru.ya.translate.translator.api.TranslatorAPIManager;
  */
 public class TranslatorPresenter implements Presenter {
 
-    private final TranslatorView view;      /** Отображение переводчика */
+    private final TranslatorView view;          /** Представление переводчика */
+    private String fromLanguageKey;             /** Исходный язык */
+    private String toLanguageKey;               /** Язык перевода */
 
     public TranslatorPresenter(TranslatorView view) {
         this.view = view;
@@ -65,7 +67,36 @@ public class TranslatorPresenter implements Presenter {
 
     }
 
+    /**
+     * Изменен исходный язык
+     * @param newLanguageKey ключ нового исходного языка
+     */
+    public void fromLanguageChangedTo(String newLanguageKey) {
+        fromLanguageKey = newLanguageKey;
+    }
+
+    /**
+     * Изменен язык перевода
+     * @param newLanguageKey ключ нового языка перевода
+     */
+    public void toLanguageChangedTo(String newLanguageKey) {
+        toLanguageKey = newLanguageKey;
+    }
+
+    /**
+     * Языки оригинала и перевода поменяли местами
+     */
+    public void languagesSwapped() {
+        String tmp = toLanguageKey;
+        toLanguageKey = fromLanguageKey;
+        fromLanguageKey = tmp;
+    }
+
+    /**
+     * Текст поля ввода был изменен
+     * @param newText новый текст поля ввода
+     */
     public void inputTextChanged(String newText) {
-        Log.d("Input", newText);
+        Log.d("TEXT CHANGED", newText);
     }
 }
