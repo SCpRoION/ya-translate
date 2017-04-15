@@ -57,6 +57,15 @@ public abstract class TranslatorAPI {
     }
 
     /**
+     * Перевести текст
+     * @param text переводимый текст
+     * @param from ключ языка, с которого осуществляется перевод
+     * @param to ключ языка, на который осуществляется перевод
+     * @return перевод текста
+     */
+    public abstract String translate(String text, String from, String to) throws APIException;
+
+    /**
      * Исключения в работе API
      */
     public class APIException extends Exception {

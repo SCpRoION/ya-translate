@@ -7,6 +7,10 @@ import ru.ya.translate.Presenter;
 import ru.ya.translate.R;
 import ru.ya.translate.translator.api.TranslatorAPI;
 import ru.ya.translate.translator.api.TranslatorAPIManager;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Kamo Spertsyan on 17.03.2017.
@@ -17,8 +21,12 @@ public class TranslatorPresenter implements Presenter {
     private String fromLanguageKey;             /** Исходный язык */
     private String toLanguageKey;               /** Язык перевода */
 
+    private Subscription curSubscription;       /** Текущий подписчик перевода */
+
     public TranslatorPresenter(TranslatorView view) {
         this.view = view;
+        fromLanguageKey = "ru";
+        toLanguageKey = "en";
     }
 
     @Override
@@ -97,6 +105,40 @@ public class TranslatorPresenter implements Presenter {
      * @param newText новый текст поля ввода
      */
     public void inputTextChanged(String newText) {
-        Log.d("TEXT CHANGED", newText);
+        translate(newText);
+    }
+
+    /**
+     * Перевести строку
+     * @param s строка для перевода
+     */
+    private void translate(final String s) {
+        // Отписать предыдущего подписчика, так как он ждет старый перевод
+        if (curSubscription != null && !curSubscription.isUnsubscribed()) {
+            curSubscription.unsubscribe();
+        }
+
+        // Подписаться на новый перевод
+        curSubscription = translationObservable(s)
+                .subscribe(
+                        translation -> view.setTranslation(translation),
+                        exception -> Log.d("TRANSLATION", exception.getMessage()),
+                        () -> {});
+
+    }
+
+    private Observable<String> translationObservable(String from) {
+        return Observable.just(from)
+                .observeOn(Schedulers.newThread())
+                .map(str -> {
+                    String res = null;
+                    try {
+                        res = TranslatorAPIManager.getTranslationAPI().translate(str, fromLanguageKey, toLanguageKey);
+                    } catch (TranslatorAPI.APIException exception) {
+                        Log.e("TRANSLATION", exception.getMessage());
+                    }
+                    return res;
+                })
+                .subscribeOn(AndroidSchedulers.mainThread());
     }
 }

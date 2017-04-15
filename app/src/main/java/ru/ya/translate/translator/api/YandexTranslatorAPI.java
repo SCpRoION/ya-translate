@@ -2,6 +2,7 @@ package ru.ya.translate.translator.api;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,5 +44,41 @@ public class YandexTranslatorAPI extends TranslatorAPI {
         catch (JSONException e) {
             Log.e("JSON PARSING", e.getMessage());
         }
+    }
+
+    @Override
+    public String translate(String text, String from, String to) throws APIException {
+        String translation = null;
+
+        try {
+            // Подготавливаем тело запроса
+            String bodyStr = "text=" + text;
+
+            // Запрашиваем ответ
+            String response = HttpSenderManager.getHttpSender().post(
+                    new String("https://translate.yandex.net/api/v1.5/tr.json/translate?lang=%1-%2&key=%3")
+                            .replace("%1", from)
+                            .replace("%2", to)
+                            .replace("%3", key),
+                    bodyStr,
+                    "application/x-www-form-urlencoded",
+                    "utf-8");
+            JSONObject obj = new JSONObject(response);
+
+            // Если словили ошибку - выбрасываем исключение
+            if (obj.has("message")) {
+                throw new APIException(obj.getString("message"));
+            }
+            // В противном случае парсим ответ
+            else {
+                JSONArray translationJson = obj.getJSONArray("text");
+                translation = translationJson.getString(0);
+            }
+        }
+        catch (JSONException e) {
+            Log.e("JSON PARSING", e.getMessage());
+        }
+
+        return translation;
     }
 }
