@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public Fragment getItem(int position) {
             Fragment fragment = null;
-            Bundle args = new Bundle();
             switch (position) {
                 case 0:
                     fragment = new TranslatorFragment();
@@ -67,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements
                     fragment = new FavoritesFragment();
                     break;
             }
-            fragment.setArguments(args);
             return fragment;
         }
 
@@ -95,16 +93,21 @@ public class MainActivity extends AppCompatActivity implements
      * @param v нажатая кнопка
      */
     public void translatorFragmentViewClicked(View v) {
-        TranslatorFragment fr = (TranslatorFragment) mSectionsPagerAdapter.getItem(0);
+        TranslatorFragment fr = (TranslatorFragment) getSupportFragmentManager().findFragmentByTag(getFragmentTag(0));
         fr.clicked(v);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == TranslatorFragment.newLanguageCheckResult) {
-            TranslatorFragment fr = (TranslatorFragment) mSectionsPagerAdapter.getItem(0);
+            TranslatorFragment fr = (TranslatorFragment) getSupportFragmentManager().findFragmentByTag(getFragmentTag(0));
             fr.manageResultData(data);
         }
+    }
+
+    private String getFragmentTag(int fragmentPosition)
+    {
+        return "android:switcher:" + mViewPager.getId() + ":" + fragmentPosition;
     }
 
     /**

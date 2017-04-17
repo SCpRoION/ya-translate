@@ -131,7 +131,11 @@ public class TranslatorPresenter implements BasePresenter {
         curSubscription = translationObservable(s)
                 .subscribe(
                         translation -> view.setTranslation(translation),
-                        exception -> Log.d("TRANSLATION", exception.getMessage()),
+                        exception -> {
+                            if (exception != null && exception.getMessage() != null) {
+                                Log.d("TRANSLATION", exception.getMessage());
+                            }
+                        },
                         () -> {});
     }
 
