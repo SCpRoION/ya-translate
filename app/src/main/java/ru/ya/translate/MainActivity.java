@@ -1,23 +1,15 @@
 package ru.ya.translate;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import ru.ya.translate.translator.TranslatorFragment;
 
@@ -52,7 +44,11 @@ public class MainActivity extends AppCompatActivity {
             Bundle args = new Bundle();
             switch (position) {
                 case 0:
+                    fragment = new TranslatorFragment();
+                    break;
                 case 1:
+                    fragment = new TranslatorFragment();
+                    break;
                 case 2:
                     fragment = new TranslatorFragment();
                     break;
@@ -78,5 +74,29 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+    /**
+     * Нажата кнопка из фрагмента переводчика
+     * @param v нажатая кнопка
+     */
+    public void translatorFragmentViewClicked(View v) {
+        TranslatorFragment fr = (TranslatorFragment) mSectionsPagerAdapter.getItem(0);
+        fr.clicked(v);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == TranslatorFragment.newLanguageCheckResult) {
+            TranslatorFragment fr = (TranslatorFragment) mSectionsPagerAdapter.getItem(0);
+            fr.manageResultData(data);
+        }
+    }
+
+    /**
+     * Реализуется фрагментами, обрабатывающими нажатия на объекты пользовательского интерфейса
+     */
+    public interface ContainsClickable {
+        void clicked(View v);
     }
 }

@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import ru.ya.translate.MainActivity;
 import ru.ya.translate.translator.TranslatorFragment;
 
 public class LanguageListActivity extends ListActivity implements LanguageListView {
@@ -34,11 +35,12 @@ public class LanguageListActivity extends ListActivity implements LanguageListVi
 
     @Override
     public void sendNewLanguageToTranslator(String newLanguageKey, String newLanguageTitle) {
-        Intent intent = new Intent(LanguageListActivity.this, TranslatorFragment.class);
+        Intent intent = new Intent(LanguageListActivity.this, MainActivity.class);
         intent.putExtra(TranslatorFragment.isLanguageFromBundleKey, isLanguageFrom);
         intent.putExtra(TranslatorFragment.newSelectedLanguageKeyBundleKey, newLanguageKey);
         intent.putExtra(TranslatorFragment.newSelectedLanguageTitleBundleKey, newLanguageTitle);
-        startActivity(intent);
+        setResult(TranslatorFragment.newLanguageCheckResult, intent);
+        finish();
     }
 
     @Override

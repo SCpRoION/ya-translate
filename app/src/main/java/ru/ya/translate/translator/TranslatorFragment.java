@@ -3,7 +3,6 @@ package ru.ya.translate.translator;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,17 +13,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ru.ya.translate.MainActivity;
 import ru.ya.translate.R;
 import ru.ya.translate.languagelist.LanguageListActivity;
 
-public class TranslatorFragment extends Fragment implements TranslatorView {
+public class TranslatorFragment extends Fragment implements TranslatorView, MainActivity.ContainsClickable {
 
     /** Ключи для используемых полей контейнеров */
     public static String isLanguageFromBundleKey = "isLanguageFrom";
     public static String newSelectedLanguageKeyBundleKey = "newSelectedLanguageKey";
     public static String newSelectedLanguageTitleBundleKey = "newSelectedLanguageTitle";
+    private final String fromLanguageBundleKey = "fromLanguage";
+    private final String toLanguageBundleKey = "toLanguage";
     private final String translatingStringBundleKey = "translatingString";
     private final String translationStringBundleKey = "translationString";
+
+    public static int newLanguageCheckResult = 0x02;/** Требуемый код результата при выборе нового языка оригинала/перевода */
 
     private TranslatorPresenter presenter;          /** Презентер */
     private EditText translatingTextEdit;           /** Поле ввода текста перевода */
@@ -48,22 +52,8 @@ public class TranslatorFragment extends Fragment implements TranslatorView {
         if (savedInstanceState != null) {
             translatingTextEdit.setText(savedInstanceState.getString(translatingStringBundleKey));
             translationTextView.setText(savedInstanceState.getString(translationStringBundleKey));
-        }
-
-        // Обработать переданные аргументы
-        Bundle extras = getArguments();
-        if (extras != null && extras.containsKey(isLanguageFromBundleKey)) {
-            boolean isLanguageFromChanged = extras.getBoolean(isLanguageFromBundleKey);
-            String newLanguageKey = extras.getString(newSelectedLanguageKeyBundleKey);
-            String newLanguageTitle = extras.getString(newSelectedLanguageTitleBundleKey);
-            if (isLanguageFromChanged) {
-                presenter.fromLanguageChangedTo(newLanguageKey);
-                setFromLanguage(newLanguageTitle);
-            }
-            else {
-                presenter.toLanguageChangedTo(newLanguageKey);
-                setToLanguage(newLanguageTitle);
-            }
+            //setFromLanguage(savedInstanceState.getString(fromLanguageBundleKey));
+            //setToLanguage(savedInstanceState.getString(toLanguageBundleKey));
         }
 
         // Прослушиваем ввод текста
@@ -91,6 +81,8 @@ public class TranslatorFragment extends Fragment implements TranslatorView {
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putString(translatingStringBundleKey, translatingTextEdit.getText().toString());
         bundle.putString(translationStringBundleKey, translationTextView.getText().toString());
+        bundle.putString(fromLanguageBundleKey, fromLanguageButton.getText().toString());
+        bundle.putString(toLanguageBundleKey, toLanguageButton.getText().toString());
     }
 
     @Override
@@ -114,20 +106,39 @@ public class TranslatorFragment extends Fragment implements TranslatorView {
     }
 
     /**
-     * Нажата кнопка исходного языка
-     * @param view нажатая кнопка
+     * Обработать данные, переданные активностью, вызвавшей startActivityForResult
+     * @param intent интент, содержащий данные
      */
-    public void onFromLanguageButtonClicked(View view) {
+    public void manageResultData(Intent intent) {
+        Bundle extras = intent.getExtras();
+        if (extras != null && extras.containsKey(isLanguageFromBundleKey)) {
+            boolean isLanguageFromChanged = extras.getBoolean(isLanguageFromBundleKey);
+            String newLanguageKey = extras.getString(newSelectedLanguageKeyBundleKey);
+            String newLanguageTitle = extras.getString(newSelectedLanguageTitleBundleKey);
+            if (isLanguageFromChanged) {
+                presenter.fromLanguageChangedTo(newLanguageKey);
+                setFromLanguage(newLanguageTitle);
+            }
+            else {
+                presenter.toLanguageChangedTo(newLanguageKey);
+                setToLanguage(newLanguageTitle);
+            }
+        }
+    }
+
+    /**
+     * Нажата кнопка исходного языка
+     */
+    public void onFromLanguageButtonClicked() {
         Intent intent = new Intent(getContext(), LanguageListActivity.class);
         intent.putExtra(isLanguageFromBundleKey, true);
-        startActivity(intent);
+        startActivityForResult(intent, newLanguageCheckResult);
     }
 
     /**
      * Нажата кнопка смены языков местами
-     * @param view нажатая кнопка
      */
-    public void onSwapLanguagesButtonClicked(View view) {
+    public void onSwapLanguagesButtonClicked() {
         presenter.languagesSwapped();
         String fromLanguageTitle = fromLanguageButton.getText().toString();
         setFromLanguage(toLanguageButton.getText().toString());
@@ -136,11 +147,25 @@ public class TranslatorFragment extends Fragment implements TranslatorView {
 
     /**
      * Нажата кнопка языка перевода
-     * @param view нажатая кнопка
      */
-    public void onToLanguageButtonClicked(View view) {
+    public void onToLanguageButtonClicked() {
         Intent intent = new Intent(getContext(), LanguageListActivity.class);
         intent.putExtra(isLanguageFromBundleKey, false);
-        startActivity(intent);
+        startActivityForResult(intent, newLanguageCheckResult);
+    }
+
+    @Override
+    public void clicked(View v) {
+        switch (v.getId()) {
+            case R.id.from_language:
+                onFromLanguageButtonClicked();
+                break;
+            case R.id.to_language:
+                onToLanguageButtonClicked();
+                break;
+            case R.id.swap_languages:
+                onSwapLanguagesButtonClicked();
+                break;
+        }
     }
 }
