@@ -10,11 +10,11 @@ import ru.ya.translate.translator.api.TranslatorAPIManager;
 /**
  * Created by Kamo Spertsyan on 19.03.2017.
  */
-public class LanguageListBasePresenter implements BasePresenter {
+public class LanguageListPresenter implements BasePresenter {
 
     private LanguageListView view;              /** Представление списка языков */
 
-    public LanguageListBasePresenter(LanguageListView view) {
+    public LanguageListPresenter(LanguageListView view) {
         this.view = view;
     }
 

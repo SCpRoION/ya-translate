@@ -24,7 +24,12 @@ public class YandexTranslatorAPI extends TranslatorAPI {
                 .replace("%1", interfaceLanguageKey)
                 .replace("%2", key));
         try {
+            // Если ответ не получили
+            if (response == null) {
+                throw new APIException("Time limit exception");
+            }
             JSONObject obj = new JSONObject(response);
+
             // Если словили ошибку - выбрасываем исключение
             if (obj.has("message")) {
                 throw new APIException(obj.getString("message"));

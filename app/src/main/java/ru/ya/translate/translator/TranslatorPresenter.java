@@ -15,7 +15,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Kamo Spertsyan on 17.03.2017.
  */
-public class TranslatorBasePresenter implements BasePresenter {
+public class TranslatorPresenter implements BasePresenter {
 
     private final TranslatorView view;          /** Представление переводчика */
     private String fromLanguageKey;             /** Исходный язык */
@@ -23,7 +23,7 @@ public class TranslatorBasePresenter implements BasePresenter {
 
     private Subscription curSubscription;       /** Текущий подписчик перевода */
 
-    public TranslatorBasePresenter(TranslatorView view) {
+    public TranslatorPresenter(TranslatorView view) {
         this.view = view;
         fromLanguageKey = "ru";
         toLanguageKey = "en";
@@ -54,6 +54,9 @@ public class TranslatorBasePresenter implements BasePresenter {
                     if (exception != null) {
                         Log.e("API INIT", exception.getMessage());
                         view.showToast(R.string.api_initialization_error);
+                    } else {
+                        view.setFromLanguage(TranslatorAPIManager.getTranslationAPI().getLanguageName(fromLanguageKey));
+                        view.setToLanguage(TranslatorAPIManager.getTranslationAPI().getLanguageName(toLanguageKey));
                     }
                 }
             }.execute();
@@ -118,13 +121,18 @@ public class TranslatorBasePresenter implements BasePresenter {
             curSubscription.unsubscribe();
         }
 
+        // Если строка пустая, то переводить не надо
+        if (s == null || s.isEmpty()) {
+            view.setTranslation("");
+            return;
+        }
+
         // Подписаться на новый перевод
         curSubscription = translationObservable(s)
                 .subscribe(
                         translation -> view.setTranslation(translation),
                         exception -> Log.d("TRANSLATION", exception.getMessage()),
                         () -> {});
-
     }
 
     private Observable<String> translationObservable(String from) {

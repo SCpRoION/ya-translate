@@ -1,11 +1,14 @@
 package ru.ya.translate.translator;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,7 +17,7 @@ import android.widget.Toast;
 import ru.ya.translate.R;
 import ru.ya.translate.languagelist.LanguageListActivity;
 
-public class TranslatorActivity extends AppCompatActivity implements TranslatorView {
+public class TranslatorFragment extends Fragment implements TranslatorView {
 
     /** Ключи для используемых полей контейнеров */
     public static String isLanguageFromBundleKey = "isLanguageFrom";
@@ -23,23 +26,22 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
     private final String translatingStringBundleKey = "translatingString";
     private final String translationStringBundleKey = "translationString";
 
-    private TranslatorBasePresenter presenter;          /** Презентер */
+    private TranslatorPresenter presenter;          /** Презентер */
     private EditText translatingTextEdit;           /** Поле ввода текста перевода */
     private TextView translationTextView;           /** Поле вывода текста перевода */
     private Button fromLanguageButton;              /** Кнопка исходного языка */
     private Button toLanguageButton;                /** Кнопка языка перевода */
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_translator);
-        translationTextView = (TextView) findViewById(R.id.translation);
-        translatingTextEdit = (EditText) findViewById(R.id.text_to_translate);
-        fromLanguageButton = (Button) findViewById(R.id.from_language);
-        toLanguageButton = (Button) findViewById(R.id.to_language);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_translator, container, false);
+        translationTextView = (TextView) rootView.findViewById(R.id.translation);
+        translatingTextEdit = (EditText) rootView.findViewById(R.id.text_to_translate);
+        fromLanguageButton = (Button) rootView.findViewById(R.id.from_language);
+        toLanguageButton = (Button) rootView.findViewById(R.id.to_language);
 
         // Создаём презентер
-        presenter = new TranslatorBasePresenter(this);
+        presenter = new TranslatorPresenter(this);
         presenter.onCreate();
 
         // Восстанавливаем сохраненное состояние
@@ -48,8 +50,8 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
             translationTextView.setText(savedInstanceState.getString(translationStringBundleKey));
         }
 
-        // Обработать данные, переданные вместе с интентом
-        Bundle extras = getIntent().getExtras();
+        // Обработать переданные аргументы
+        Bundle extras = getArguments();
         if (extras != null && extras.containsKey(isLanguageFromBundleKey)) {
             boolean isLanguageFromChanged = extras.getBoolean(isLanguageFromBundleKey);
             String newLanguageKey = extras.getString(newSelectedLanguageKeyBundleKey);
@@ -81,17 +83,19 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
 
             }
         });
+
+        return rootView;
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle bundle) {
+    public void onSaveInstanceState(Bundle bundle) {
         bundle.putString(translatingStringBundleKey, translatingTextEdit.getText().toString());
         bundle.putString(translationStringBundleKey, translationTextView.getText().toString());
     }
 
     @Override
     public void showToast(int messageId) {
-        Toast.makeText(this, getString(messageId), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), getString(messageId), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -99,11 +103,13 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
         translationTextView.setText(translation);
     }
 
-    private void setFromLanguage(String name) {
+    @Override
+    public void setFromLanguage(String name) {
         fromLanguageButton.setText(name);
     }
 
-    private void setToLanguage(String name) {
+    @Override
+    public void setToLanguage(String name) {
         toLanguageButton.setText(name);
     }
 
@@ -112,7 +118,7 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
      * @param view нажатая кнопка
      */
     public void onFromLanguageButtonClicked(View view) {
-        Intent intent = new Intent(TranslatorActivity.this, LanguageListActivity.class);
+        Intent intent = new Intent(getContext(), LanguageListActivity.class);
         intent.putExtra(isLanguageFromBundleKey, true);
         startActivity(intent);
     }
@@ -133,7 +139,7 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
      * @param view нажатая кнопка
      */
     public void onToLanguageButtonClicked(View view) {
-        Intent intent = new Intent(TranslatorActivity.this, LanguageListActivity.class);
+        Intent intent = new Intent(getContext(), LanguageListActivity.class);
         intent.putExtra(isLanguageFromBundleKey, false);
         startActivity(intent);
     }

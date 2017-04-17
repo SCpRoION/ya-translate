@@ -17,4 +17,16 @@ public interface TranslatorView {
      * @param translation перевод текста
      */
     void setTranslation(String translation);
+
+    /**
+     * Установить название языка перевола
+     * @param name название языка перевода
+     */
+    void setFromLanguage(String name);
+
+    /**
+     * Установить название языка источника
+     * @param name название языка источника
+     */
+    void setToLanguage(String name);
 }

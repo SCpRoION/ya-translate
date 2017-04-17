@@ -9,20 +9,20 @@ import android.widget.ListView;
 
 import java.util.List;
 
-import ru.ya.translate.translator.TranslatorActivity;
+import ru.ya.translate.translator.TranslatorFragment;
 
 public class LanguageListActivity extends ListActivity implements LanguageListView {
 
     private boolean isLanguageFrom;             /** Флаг выбираемого языка (истина, если язык источника) */
-    private LanguageListBasePresenter presenter;    /** Презентер */
+    private LanguageListPresenter presenter;    /** Презентер */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isLanguageFrom = getIntent().getExtras().getBoolean(TranslatorActivity.isLanguageFromBundleKey);
+        isLanguageFrom = getIntent().getExtras().getBoolean(TranslatorFragment.isLanguageFromBundleKey);
 
         // Создаём презентер
-        presenter = new LanguageListBasePresenter(this);
+        presenter = new LanguageListPresenter(this);
         presenter.onCreate();
     }
 
@@ -34,10 +34,10 @@ public class LanguageListActivity extends ListActivity implements LanguageListVi
 
     @Override
     public void sendNewLanguageToTranslator(String newLanguageKey, String newLanguageTitle) {
-        Intent intent = new Intent(LanguageListActivity.this, TranslatorActivity.class);
-        intent.putExtra(TranslatorActivity.isLanguageFromBundleKey, isLanguageFrom);
-        intent.putExtra(TranslatorActivity.newSelectedLanguageKeyBundleKey, newLanguageKey);
-        intent.putExtra(TranslatorActivity.newSelectedLanguageTitleBundleKey, newLanguageTitle);
+        Intent intent = new Intent(LanguageListActivity.this, TranslatorFragment.class);
+        intent.putExtra(TranslatorFragment.isLanguageFromBundleKey, isLanguageFrom);
+        intent.putExtra(TranslatorFragment.newSelectedLanguageKeyBundleKey, newLanguageKey);
+        intent.putExtra(TranslatorFragment.newSelectedLanguageTitleBundleKey, newLanguageTitle);
         startActivity(intent);
     }
 

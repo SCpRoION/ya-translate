@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="ru.ya.translate.translator.TranslatorActivity">
+    tools:context="ru.ya.translate.translator.TranslatorFragment">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:layout_weight=".40"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:onClick="onFromLanguageButtonClicked"
-            android:text="Русский" />
+            tools:text="Русский" />
 
         <Button
             android:id="@+id/swap_languages"
@@ -42,7 +42,7 @@
             android:layout_weight=".40"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:onClick="onToLanguageButtonClicked"
-            android:text="Английский" />
+            tools:text="Английский" />
     </LinearLayout>
 
     <EditText

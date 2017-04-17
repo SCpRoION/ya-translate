@@ -43,6 +43,15 @@ public abstract class TranslatorAPI {
     }
 
     /**
+     * Получить название языка по ключу
+     * @param languageKey ключ языка
+     * @return название языка
+     */
+    public String getLanguageName(String languageKey) {
+        return supportedLanguages.get(languageKey);
+    }
+
+    /**
      * Получить ключ языка по его названию
      * @param languageTitle название языка
      * @return ключ языка
