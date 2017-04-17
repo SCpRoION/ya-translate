@@ -3,7 +3,7 @@ package ru.ya.translate;
 /**
  * Created by Kamo Spertsyan on 17.03.2017.
  */
-public interface Presenter {
+public interface BasePresenter {
 
     /**
      * Методы жизненного цикла

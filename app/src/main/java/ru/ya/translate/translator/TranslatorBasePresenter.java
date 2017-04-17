@@ -3,7 +3,7 @@ package ru.ya.translate.translator;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import ru.ya.translate.Presenter;
+import ru.ya.translate.BasePresenter;
 import ru.ya.translate.R;
 import ru.ya.translate.translator.api.TranslatorAPI;
 import ru.ya.translate.translator.api.TranslatorAPIManager;
@@ -15,7 +15,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Kamo Spertsyan on 17.03.2017.
  */
-public class TranslatorPresenter implements Presenter {
+public class TranslatorBasePresenter implements BasePresenter {
 
     private final TranslatorView view;          /** Представление переводчика */
     private String fromLanguageKey;             /** Исходный язык */
@@ -23,7 +23,7 @@ public class TranslatorPresenter implements Presenter {
 
     private Subscription curSubscription;       /** Текущий подписчик перевода */
 
-    public TranslatorPresenter(TranslatorView view) {
+    public TranslatorBasePresenter(TranslatorView view) {
         this.view = view;
         fromLanguageKey = "ru";
         toLanguageKey = "en";

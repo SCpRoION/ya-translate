@@ -23,7 +23,7 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
     private final String translatingStringBundleKey = "translatingString";
     private final String translationStringBundleKey = "translationString";
 
-    private TranslatorPresenter presenter;          /** Презентер */
+    private TranslatorBasePresenter presenter;          /** Презентер */
     private EditText translatingTextEdit;           /** Поле ввода текста перевода */
     private TextView translationTextView;           /** Поле вывода текста перевода */
     private Button fromLanguageButton;              /** Кнопка исходного языка */
@@ -39,7 +39,7 @@ public class TranslatorActivity extends AppCompatActivity implements TranslatorV
         toLanguageButton = (Button) findViewById(R.id.to_language);
 
         // Создаём презентер
-        presenter = new TranslatorPresenter(this);
+        presenter = new TranslatorBasePresenter(this);
         presenter.onCreate();
 
         // Восстанавливаем сохраненное состояние

@@ -14,7 +14,7 @@ import ru.ya.translate.translator.TranslatorActivity;
 public class LanguageListActivity extends ListActivity implements LanguageListView {
 
     private boolean isLanguageFrom;             /** Флаг выбираемого языка (истина, если язык источника) */
-    private LanguageListPresenter presenter;    /** Презентер */
+    private LanguageListBasePresenter presenter;    /** Презентер */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +22,7 @@ public class LanguageListActivity extends ListActivity implements LanguageListVi
         isLanguageFrom = getIntent().getExtras().getBoolean(TranslatorActivity.isLanguageFromBundleKey);
 
         // Создаём презентер
-        presenter = new LanguageListPresenter(this);
+        presenter = new LanguageListBasePresenter(this);
         presenter.onCreate();
     }
 
