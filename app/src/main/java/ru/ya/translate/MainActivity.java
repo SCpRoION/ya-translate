@@ -11,9 +11,13 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 
+import ru.ya.translate.favorites.FavoritesFragment;
+import ru.ya.translate.history.HistoryFragment;
 import ru.ya.translate.translator.TranslatorFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        FavoritesFragment.OnListFragmentInteractionListener,
+        HistoryFragment.OnListFragmentInteractionListener{
 
     private SectionsPagerAdapter mSectionsPagerAdapter;  /** Адаптер фрагментов на каждый таб */
     private ViewPager mViewPager;                        /** Контейнер фрагментов */
@@ -32,6 +36,16 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
     }
 
+    @Override
+    public void onListFragmentInteraction(ru.ya.translate.history.dummy.DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(ru.ya.translate.favorites.dummy.DummyContent.DummyItem item) {
+
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -47,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new TranslatorFragment();
                     break;
                 case 1:
-                    fragment = new TranslatorFragment();
+                    fragment = new HistoryFragment();
                     break;
                 case 2:
-                    fragment = new TranslatorFragment();
+                    fragment = new FavoritesFragment();
                     break;
             }
             fragment.setArguments(args);
