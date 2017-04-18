@@ -116,12 +116,19 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
             String newLanguageKey = extras.getString(newSelectedLanguageKeyBundleKey);
             String newLanguageTitle = extras.getString(newSelectedLanguageTitleBundleKey);
             if (isLanguageFromChanged) {
-                presenter.fromLanguageChangedTo(newLanguageKey);
-                setFromLanguage(newLanguageTitle);
-            }
-            else {
-                presenter.toLanguageChangedTo(newLanguageKey);
-                setToLanguage(newLanguageTitle);
+                if (toLanguageButton.getText().toString().equals(newLanguageTitle)) {
+                    swapLanguages();
+                } else {
+                    presenter.fromLanguageChangedTo(newLanguageKey);
+                    setFromLanguage(newLanguageTitle);
+                }
+            } else {
+                if (fromLanguageButton.getText().toString().equals(newLanguageTitle)) {
+                    swapLanguages();
+                } else {
+                    presenter.toLanguageChangedTo(newLanguageKey);
+                    setToLanguage(newLanguageTitle);
+                }
             }
         }
     }
@@ -139,6 +146,13 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
      * Нажата кнопка смены языков местами
      */
     public void onSwapLanguagesButtonClicked() {
+        swapLanguages();
+    }
+
+    /**
+     * Поменять языки местами
+     */
+    private void swapLanguages() {
         presenter.languagesSwapped();
         String fromLanguageTitle = fromLanguageButton.getText().toString();
         setFromLanguage(toLanguageButton.getText().toString());
