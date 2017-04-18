@@ -52,8 +52,8 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
         if (savedInstanceState != null) {
             translatingTextEdit.setText(savedInstanceState.getString(translatingStringBundleKey));
             translationTextView.setText(savedInstanceState.getString(translationStringBundleKey));
-            //setFromLanguage(savedInstanceState.getString(fromLanguageBundleKey));
-            //setToLanguage(savedInstanceState.getString(toLanguageBundleKey));
+            setFromLanguage(savedInstanceState.getString(fromLanguageBundleKey));
+            setToLanguage(savedInstanceState.getString(toLanguageBundleKey));
         }
 
         // Прослушиваем ввод текста
