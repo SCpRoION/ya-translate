@@ -84,6 +84,7 @@ public class TranslatorPresenter implements BasePresenter {
      */
     public void fromLanguageChangedTo(String newLanguageKey) {
         fromLanguageKey = newLanguageKey;
+        translate(view.getTranslatingText());
     }
 
     /**
@@ -92,6 +93,7 @@ public class TranslatorPresenter implements BasePresenter {
      */
     public void toLanguageChangedTo(String newLanguageKey) {
         toLanguageKey = newLanguageKey;
+        translate(view.getTranslatingText());
     }
 
     /**
@@ -101,6 +103,7 @@ public class TranslatorPresenter implements BasePresenter {
         String tmp = toLanguageKey;
         toLanguageKey = fromLanguageKey;
         fromLanguageKey = tmp;
+        translate(view.getTranslatingText());
     }
 
     /**

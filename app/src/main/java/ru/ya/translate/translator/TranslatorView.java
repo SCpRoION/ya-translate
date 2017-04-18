@@ -29,4 +29,10 @@ public interface TranslatorView {
      * @param name название языка источника
      */
     void setToLanguage(String name);
+
+    /**
+     * Узнать переводимый текст
+     * @return переводимый текст
+     */
+    String getTranslatingText();
 }

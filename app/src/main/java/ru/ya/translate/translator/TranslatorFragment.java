@@ -105,6 +105,11 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
         toLanguageButton.setText(name);
     }
 
+    @Override
+    public String getTranslatingText() {
+        return translatingTextEdit.getText().toString();
+    }
+
     /**
      * Обработать данные, переданные активностью, вызвавшей startActivityForResult
      * @param intent интент, содержащий данные
@@ -146,6 +151,7 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
      * Нажата кнопка смены языков местами
      */
     public void onSwapLanguagesButtonClicked() {
+        translatingTextEdit.setText(translationTextView.getText());
         swapLanguages();
     }
 
