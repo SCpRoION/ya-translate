@@ -45,19 +45,27 @@
             android:text="Английский" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/text_to_translate"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".30"
-        android:inputType="text"
-        android:textSize="18sp"
-        android:gravity="top" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight=".30">
 
-    <TextView
-        android:id="@+id/translation"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".62"/>
+        <EditText
+            android:id="@+id/text_to_translate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".50"
+            android:inputType="text"
+            android:textSize="18sp"
+            android:gravity="top"/>
+
+        <TextView
+            android:id="@+id/translation"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".50"/>
+
+    </LinearLayout>
 
 </LinearLayout>
