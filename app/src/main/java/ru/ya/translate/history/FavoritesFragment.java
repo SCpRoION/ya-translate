@@ -26,6 +26,8 @@ public class FavoritesFragment extends BaseHistoryFragment {
         TranslationsStorage.getInstance().addOnTranslationFavoriteSwitchedListener(translation -> {
             if (translation.isFavorite()) {
                 adapter.addData(translation);
+            } else {
+                adapter.removeData(translation);
             }
         });
 
