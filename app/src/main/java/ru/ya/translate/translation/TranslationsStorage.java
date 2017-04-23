@@ -67,6 +67,14 @@ public class TranslationsStorage {
     }
 
     /**
+     * Добавить/удалить из избранного
+     * @param translation перевод
+     */
+    public void switchFavorite(TranslationModel translation) {
+        dbHelper.updateTranslation(translation);
+    }
+
+    /**
      * Загрузить все записи
      */
     public void loadAll() {

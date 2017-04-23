@@ -16,7 +16,9 @@ import ru.ya.translate.R;
 import ru.ya.translate.translation.TranslationModel;
 import ru.ya.translate.translation.TranslationsStorage;
 
-public class HistoryFragment extends Fragment implements TranslationsStorage.OnTranslationAddedListener {
+public class HistoryFragment extends Fragment implements TranslationsStorage.OnTranslationAddedListener,
+        HistoryRecyclerViewAdapter.OnFavoriteBtnClickedListener,
+        HistoryRecyclerViewAdapter.OnItemClickedListener{
 
     private HistoryRecyclerViewAdapter adapter;
 
@@ -43,6 +45,8 @@ public class HistoryFragment extends Fragment implements TranslationsStorage.OnT
         TranslationsStorage.getInstance().addOnTranslationAddedListener(this);
         Collections.reverse(translations);
         adapter.setData(translations);
+        adapter.setOnFavoriteBtnClickedListener(this);
+        adapter.setOnItemClickedListener(this);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -51,5 +55,16 @@ public class HistoryFragment extends Fragment implements TranslationsStorage.OnT
     @Override
     public void translationAdded(TranslationModel translation) {
         adapter.addData(translation);
+    }
+
+    @Override
+    public void favoriteBtnClicked(TranslationModel translation, boolean setFavorite) {
+        translation.setFavorite(setFavorite);
+        TranslationsStorage.getInstance().switchFavorite(translation);
+    }
+
+    @Override
+    public void itemClicked(TranslationModel translation) {
+
     }
 }

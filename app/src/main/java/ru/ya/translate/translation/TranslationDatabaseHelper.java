@@ -61,6 +61,24 @@ public class TranslationDatabaseHelper extends SQLiteOpenHelper{
     }
 
     /**
+     * Обновить перевод в БД
+     * @param translation обновляемый перевод
+     */
+    public void updateTranslation(TranslationModel translation) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TRANSLATION_TABLE_TEXT_FROM, translation.getTextFrom());
+        contentValues.put(TRANSLATION_TABLE_TRANSLATION, translation.getTranslation());
+        contentValues.put(TRANSLATION_TABLE_FROM_LANGUAGE, translation.getFromLanguageKey());
+        contentValues.put(TRANSLATION_TABLE_TO_LANGUAGE, translation.getToLanguageKey());
+        contentValues.put(TRANSLATION_TABLE_IS_FAVORITE, translation.isFavorite() ? 1 : 0);
+
+        getWritableDatabase().update(TRANSLATION_TABLE_NAME,
+                contentValues,
+                TRANSLATION_TABLE_ID + " = ?",
+                new String[] { Integer.toString(translation.getId()) });
+    }
+
+    /**
      * Удалить перевод из БД
      * @param translation удаляемый перевод
      */
