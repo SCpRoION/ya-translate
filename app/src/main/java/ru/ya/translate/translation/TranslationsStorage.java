@@ -9,9 +9,10 @@ import java.util.ArrayList;
  */
 public class TranslationsStorage {
 
-    private final TranslationDatabaseHelper dbHelper;       /** Адаптер базы данных */
-    private ArrayList<TranslationModel> translations;       /** История переводов */
-    private ArrayList<OnTranslationAddedListener> listeners;/** Слушатели события добавления нового перевода */
+    private final TranslationDatabaseHelper dbHelper;                                                   /** Адаптер базы данных */
+    private ArrayList<TranslationModel> translations;                                                   /** История переводов */
+    private ArrayList<OnTranslationAddedListener> onTranslationAddedListeners;                          /** Слушатели события добавления нового перевода */
+    private ArrayList<OnTranslationFavoriteSwitchedListener> onTranslationFavoriteSwitchedListeners;    /** Слушатели события добавления нового перевода */
 
     private static TranslationsStorage instance;             /** Единственный экземпляр класса */
 
@@ -30,7 +31,8 @@ public class TranslationsStorage {
     private TranslationsStorage(Context context) {
         dbHelper = new TranslationDatabaseHelper(context);
         translations = new ArrayList<>();
-        listeners = new ArrayList<>();
+        onTranslationAddedListeners = new ArrayList<>();
+        onTranslationFavoriteSwitchedListeners = new ArrayList<>();
         loadAll();
     }
 
@@ -39,7 +41,7 @@ public class TranslationsStorage {
      * @param listener слушатель
      */
     public void addOnTranslationAddedListener(OnTranslationAddedListener listener) {
-        listeners.add(listener);
+        onTranslationAddedListeners.add(listener);
     }
 
     /**
@@ -47,8 +49,26 @@ public class TranslationsStorage {
      * @param translation
      */
     private void fireTranslationAdded(TranslationModel translation) {
-        for (OnTranslationAddedListener listener : listeners) {
+        for (OnTranslationAddedListener listener : onTranslationAddedListeners) {
             listener.translationAdded(translation);
+        }
+    }
+
+    /**
+     * Добавить слушателя события добавления нового перевода
+     * @param listener слушатель
+     */
+    public void addOnTranslationFavoriteSwitchedListener(OnTranslationFavoriteSwitchedListener listener) {
+        onTranslationFavoriteSwitchedListeners.add(listener);
+    }
+
+    /**
+     * Сообщить о добавлении нового перевода
+     * @param translation
+     */
+    private void fireTranslationFavoriteSwitched(TranslationModel translation) {
+        for (OnTranslationFavoriteSwitchedListener listener : onTranslationFavoriteSwitchedListeners) {
+            listener.translationFavoriteSwitched(translation);
         }
     }
 
@@ -71,7 +91,10 @@ public class TranslationsStorage {
      * @param translation перевод
      */
     public void switchFavorite(TranslationModel translation) {
+        translation.setFavorite(!translation.isFavorite());
         dbHelper.updateTranslation(translation);
+
+        fireTranslationFavoriteSwitched(translation);
     }
 
     /**
@@ -87,10 +110,29 @@ public class TranslationsStorage {
      * @return список текущих сохраненных переводов
      */
     public ArrayList<TranslationModel> getTranslations() {
-        return translations;
+        return (ArrayList<TranslationModel>) translations.clone();
+    }
+
+
+    /**
+     * Получить список текущих избранных переводов
+     * @return список текущих избранных переводов
+     */
+    public ArrayList<TranslationModel> getFavoriteTranslations() {
+        ArrayList<TranslationModel> res = new ArrayList<>();
+        for (TranslationModel tm : translations) {
+            if (tm.isFavorite()) {
+                res.add(tm);
+            }
+        }
+        return res;
     }
 
     public interface OnTranslationAddedListener {
         void translationAdded(TranslationModel translation);
+    }
+
+    public interface OnTranslationFavoriteSwitchedListener {
+        void translationFavoriteSwitched(TranslationModel translation);
     }
 }

@@ -28,7 +28,17 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     }
 
     public void addData(TranslationModel translation) {
-        translations.add(0, translation);
+        int i = 0;
+        for (; i < translations.size(); ++i) {
+            int trId = translations.get(i).getId();
+            if (trId == translation.getId()) {
+                return;
+            }
+            if (trId < translation.getId()) {
+                break;
+            }
+        }
+        translations.add(i, translation);
 
         notifyDataSetChanged();
     }

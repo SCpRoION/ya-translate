@@ -13,18 +13,21 @@ import ru.ya.translate.translation.TranslationsStorage;
 /**
  * Created by kamospertsyan on 23.04.17.
  */
-public class HistoryFragment extends BaseHistoryFragment {
+public class FavoritesFragment extends BaseHistoryFragment {
     @Override
     protected List<TranslationModel> getContent() {
-        return TranslationsStorage.getInstance().getTranslations();
+        return TranslationsStorage.getInstance().getFavoriteTranslations();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        TranslationsStorage.getInstance().addOnTranslationAddedListener(translation -> adapter.addData(translation));
-        TranslationsStorage.getInstance().addOnTranslationFavoriteSwitchedListener(translation -> adapter.notifyDataSetChanged());
+        TranslationsStorage.getInstance().addOnTranslationFavoriteSwitchedListener(translation -> {
+            if (translation.isFavorite()) {
+                adapter.addData(translation);
+            }
+        });
 
         return view;
     }

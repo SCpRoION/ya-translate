@@ -11,15 +11,12 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 
-import ru.ya.translate.favorites.FavoritesFragment;
-import ru.ya.translate.history.HistoryFragment;
-import ru.ya.translate.translation.TranslationDatabaseHelper;
+import ru.ya.translate.history.*;
 import ru.ya.translate.translation.TranslationModel;
 import ru.ya.translate.translation.TranslationsStorage;
 import ru.ya.translate.translator.TranslatorFragment;
 
-public class MainActivity extends AppCompatActivity implements
-        FavoritesFragment.OnListFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;  /** Адаптер фрагментов на каждый таб */
     private ViewPager mViewPager;                        /** Контейнер фрагментов */
@@ -41,12 +38,8 @@ public class MainActivity extends AppCompatActivity implements
         TranslationsStorage.init(this);
     }
 
-    @Override
-    public void onListFragmentInteraction(ru.ya.translate.favorites.dummy.DummyContent.DummyItem item) {
-
-    }
-
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter implements
+            MainActivity.OnGoToTranslatorFragmentListener {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -61,14 +54,11 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case 1:
                     fragment = new HistoryFragment();
-                    ((HistoryFragment) fragment).setOnGoToTranslationFragmentListener(tranlsation -> {
-                        mViewPager.setCurrentItem(0);
-                        TranslatorFragment fr = (TranslatorFragment) getSupportFragmentManager().findFragmentByTag(getFragmentTag(0));
-                        fr.setState(tranlsation);
-                    });
+                    ((HistoryFragment) fragment).setOnGoToTranslationFragmentListener(this);
                     break;
                 case 2:
                     fragment = new FavoritesFragment();
+                    ((FavoritesFragment) fragment).setOnGoToTranslationFragmentListener(this);
                     break;
             }
             return fragment;
@@ -90,6 +80,13 @@ public class MainActivity extends AppCompatActivity implements
                     return getString(R.string.favorites);
             }
             return null;
+        }
+
+        @Override
+        public void goToTranslatorFragment(TranslationModel currentTranslation) {
+            mViewPager.setCurrentItem(0);
+            TranslatorFragment fr = (TranslatorFragment) getSupportFragmentManager().findFragmentByTag(getFragmentTag(0));
+            fr.setState(currentTranslation);
         }
     }
 

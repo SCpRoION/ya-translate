@@ -4,12 +4,8 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import ru.ya.translate.BasePresenter;
 import ru.ya.translate.R;
-import ru.ya.translate.translation.TranslationDatabaseHelper;
 import ru.ya.translate.translation.TranslationModel;
 import ru.ya.translate.translation.TranslationsStorage;
 import ru.ya.translate.translator.api.TranslatorAPI;
