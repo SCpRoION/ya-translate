@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import java.util.Collections;
 import java.util.List;
 
+import ru.ya.translate.MainActivity;
 import ru.ya.translate.R;
 import ru.ya.translate.translation.TranslationModel;
 import ru.ya.translate.translation.TranslationsStorage;
@@ -21,9 +22,18 @@ public class HistoryFragment extends Fragment implements TranslationsStorage.OnT
         HistoryRecyclerViewAdapter.OnItemClickedListener{
 
     private HistoryRecyclerViewAdapter adapter;
+    private MainActivity.OnGoToTranslatorFragmentListener goToTranslatorFragmentListener;
 
     public HistoryFragment() {
 
+    }
+
+    /**
+     * Установить слушателя запроса на переход к фрагменту переводчика
+     * @param goToTranslatorFragmentListener слушатель
+     */
+    public void setOnGoToTranslationFragmentListener(MainActivity.OnGoToTranslatorFragmentListener goToTranslatorFragmentListener) {
+        this.goToTranslatorFragmentListener = goToTranslatorFragmentListener;
     }
 
     @Override
@@ -65,6 +75,6 @@ public class HistoryFragment extends Fragment implements TranslationsStorage.OnT
 
     @Override
     public void itemClicked(TranslationModel translation) {
-
+        goToTranslatorFragmentListener.goToTranslatorFragment(translation);
     }
 }

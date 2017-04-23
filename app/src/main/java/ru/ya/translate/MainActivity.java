@@ -14,6 +14,7 @@ import android.view.View;
 import ru.ya.translate.favorites.FavoritesFragment;
 import ru.ya.translate.history.HistoryFragment;
 import ru.ya.translate.translation.TranslationDatabaseHelper;
+import ru.ya.translate.translation.TranslationModel;
 import ru.ya.translate.translation.TranslationsStorage;
 import ru.ya.translate.translator.TranslatorFragment;
 
@@ -60,6 +61,11 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case 1:
                     fragment = new HistoryFragment();
+                    ((HistoryFragment) fragment).setOnGoToTranslationFragmentListener(tranlsation -> {
+                        mViewPager.setCurrentItem(0);
+                        TranslatorFragment fr = (TranslatorFragment) getSupportFragmentManager().findFragmentByTag(getFragmentTag(0));
+                        fr.setState(tranlsation);
+                    });
                     break;
                 case 2:
                     fragment = new FavoritesFragment();
@@ -114,5 +120,9 @@ public class MainActivity extends AppCompatActivity implements
      */
     public interface ContainsClickable {
         void clicked(View v);
+    }
+
+    public interface OnGoToTranslatorFragmentListener {
+        void goToTranslatorFragment(TranslationModel currentTranslation);
     }
 }

@@ -3,7 +3,6 @@ package ru.ya.translate.translator;
 /**
  * Created by Kamo Spertsyan on 17.03.2017.
  */
-
 public interface TranslatorView {
 
     /**
@@ -11,6 +10,12 @@ public interface TranslatorView {
      * @param messageId идентификатор сообщения из строковых ресурсов
      */
     void showToast(int messageId);
+
+    /**
+     * Установить оригинальный текст
+     * @param textFrom оригинальный текст
+     */
+    void setTextFrom(String textFrom);
 
     /**
      * Установить перевод

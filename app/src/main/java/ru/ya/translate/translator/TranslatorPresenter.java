@@ -87,6 +87,20 @@ public class TranslatorPresenter implements BasePresenter {
     }
 
     /**
+     * Установить состояние фрагмента
+     * @param translation сохраненный перевод
+     */
+    public void setState(TranslationModel translation) {
+        fromLanguageKey = translation.getFromLanguageKey();
+        toLanguageKey = translation.getToLanguageKey();
+
+        view.setFromLanguage(TranslatorAPIManager.getTranslationAPI().getLanguageName(fromLanguageKey));
+        view.setToLanguage(TranslatorAPIManager.getTranslationAPI().getLanguageName(toLanguageKey));
+        view.setTextFrom(translation.getTextFrom());
+        view.setTranslation(translation.getTranslation());
+    }
+
+    /**
      * Изменен исходный язык
      *
      * @param newLanguageKey ключ нового исходного языка

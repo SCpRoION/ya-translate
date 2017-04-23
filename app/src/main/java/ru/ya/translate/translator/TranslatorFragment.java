@@ -16,6 +16,7 @@ import android.widget.Toast;
 import ru.ya.translate.MainActivity;
 import ru.ya.translate.R;
 import ru.ya.translate.languagelist.LanguageListActivity;
+import ru.ya.translate.translation.TranslationModel;
 
 public class TranslatorFragment extends Fragment implements TranslatorView, MainActivity.ContainsClickable {
 
@@ -88,6 +89,12 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
     @Override
     public void showToast(int messageId) {
         Toast.makeText(getContext(), getString(messageId), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setTextFrom(String textFrom) {
+        translatingTextEdit.setText(textFrom);
+        translatingTextEdit.setSelection(textFrom.length());
     }
 
     @Override
@@ -172,6 +179,14 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
         Intent intent = new Intent(getContext(), LanguageListActivity.class);
         intent.putExtra(isLanguageFromBundleKey, false);
         startActivityForResult(intent, newLanguageCheckResult);
+    }
+
+    /**
+     * Установить состояние фрагмента
+     * @param translation сохраненный перевод
+     */
+    public void setState(TranslationModel translation) {
+        presenter.setState(translation);
     }
 
     @Override
