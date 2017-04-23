@@ -75,6 +75,12 @@ public class TranslatorFragment extends Fragment implements TranslatorView, Main
             }
         });
 
+        translatingTextEdit.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                presenter.editTextFocusLost();
+            }
+        });
+
         return rootView;
     }
 

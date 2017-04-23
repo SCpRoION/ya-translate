@@ -52,7 +52,12 @@ public abstract class BaseHistoryFragment extends Fragment {
         List<TranslationModel> translations = getContent();
         Collections.reverse(translations);
         adapter.setData(translations);
-        adapter.setOnFavoriteBtnClickedListener((translation, setFavorite) -> TranslationsStorage.getInstance().switchFavorite(translation));
+        adapter.setOnFavoriteBtnClickedListener(new HistoryRecyclerViewAdapter.OnFavoriteBtnClickedListener() {
+            @Override
+            public void favoriteBtnClicked(TranslationModel translation, boolean setFavorite) {
+                TranslationsStorage.getInstance().switchFavorite(translation);
+            }
+        });
         adapter.setOnItemClickedListener(translation -> goToTranslatorFragmentListener.goToTranslatorFragment(translation));
         recyclerView.setAdapter(adapter);
 

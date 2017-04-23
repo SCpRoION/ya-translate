@@ -25,7 +25,7 @@ public class TranslatorPresenter implements BasePresenter {
     private String toLanguageKey;                               /** Язык перевода */
     private TranslationModel lastTranslation;                   /** Информация о последнем переводе */
     private long lastTranslationTime;                           /** Время последнего перевода */
-    private final long pauseBeforeSavingLastTranslation = 1000; /** Временная пауза перед сохранением последнего перевода при отсутствии изменений */
+    private final long pauseBeforeSavingLastTranslation = 2500; /** Временная пауза перед сохранением последнего перевода при отсутствии изменений */
     private Subscription curSubscription;                       /** Текущий подписчик перевода */
 
     public TranslatorPresenter(TranslatorView view) {
@@ -97,6 +97,13 @@ public class TranslatorPresenter implements BasePresenter {
     }
 
     /**
+     * Фокус поля ввода текста потерян
+     */
+    public void editTextFocusLost() {
+        saveLastTranslation();
+    }
+
+    /**
      * Изменен исходный язык
      *
      * @param newLanguageKey ключ нового исходного языка
@@ -146,8 +153,7 @@ public class TranslatorPresenter implements BasePresenter {
 
         // Проверить, нужно ли сохранить последний перевод в историю
         if (lastTranslation != null && System.currentTimeMillis() - lastTranslationTime >= pauseBeforeSavingLastTranslation) {
-            TranslationsStorage.getInstance().add(lastTranslation);
-            lastTranslation = null;
+            saveLastTranslation();
         }
 
         // Отписать предыдущего подписчика, так как он ждет старый перевод
@@ -191,5 +197,15 @@ public class TranslatorPresenter implements BasePresenter {
                     return res;
                 })
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * Сохранить последний произведенный перевод
+     */
+    private void saveLastTranslation() {
+        if (lastTranslation != null) {
+            TranslationsStorage.getInstance().add(lastTranslation);
+            lastTranslation = null;
+        }
     }
 }
