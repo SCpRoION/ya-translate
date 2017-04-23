@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,7 +24,7 @@ public abstract class BaseHistoryFragment extends Fragment {
     private MainActivity.OnGoToTranslatorFragmentListener goToTranslatorFragmentListener;
 
     public BaseHistoryFragment() {
-
+        setUserVisibleHint(false);
     }
 
     /**
@@ -61,7 +62,19 @@ public abstract class BaseHistoryFragment extends Fragment {
         adapter.setOnItemClickedListener(translation -> goToTranslatorFragmentListener.goToTranslatorFragment(translation));
         recyclerView.setAdapter(adapter);
 
+        registerForContextMenu(recyclerView);
+        TranslationsStorage.getInstance().addOnTranslationRemovedListener(translation -> adapter.removeData(translation));
+
         return view;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (getUserVisibleHint()) {
+            TranslationModel translation = adapter.getCurrentTranslation();
+            TranslationsStorage.getInstance().remove(translation);
+        }
+        return super.onContextItemSelected(item);
     }
 
     protected abstract List<TranslationModel> getContent();

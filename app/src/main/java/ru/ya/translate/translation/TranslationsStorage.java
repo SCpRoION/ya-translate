@@ -12,7 +12,8 @@ public class TranslationsStorage {
     private final TranslationDatabaseHelper dbHelper;                                                   /** Адаптер базы данных */
     private ArrayList<TranslationModel> translations;                                                   /** История переводов */
     private ArrayList<OnTranslationAddedListener> onTranslationAddedListeners;                          /** Слушатели события добавления нового перевода */
-    private ArrayList<OnTranslationFavoriteSwitchedListener> onTranslationFavoriteSwitchedListeners;    /** Слушатели события добавления нового перевода */
+    private ArrayList<OnTranslationFavoriteSwitchedListener> onTranslationFavoriteSwitchedListeners;    /** Слушатели события изменения флага избранного перевода */
+    private ArrayList<OnTranslationRemovedListener> onTranslationRemovedListeners;                      /** Слушатели события удаления перевода */
 
     private static TranslationsStorage instance;             /** Единственный экземпляр класса */
 
@@ -33,6 +34,7 @@ public class TranslationsStorage {
         translations = new ArrayList<>();
         onTranslationAddedListeners = new ArrayList<>();
         onTranslationFavoriteSwitchedListeners = new ArrayList<>();
+        onTranslationRemovedListeners = new ArrayList<>();
         loadAll();
     }
 
@@ -64,11 +66,29 @@ public class TranslationsStorage {
 
     /**
      * Сообщить о добавлении нового перевода
-     * @param translation
+     * @param translation новый перевод
      */
     private void fireTranslationFavoriteSwitched(TranslationModel translation) {
         for (OnTranslationFavoriteSwitchedListener listener : onTranslationFavoriteSwitchedListeners) {
             listener.translationFavoriteSwitched(translation);
+        }
+    }
+
+    /**
+     * Добавить слушателя события удаления перевода
+     * @param listener слушатель
+     */
+    public void addOnTranslationRemovedListener(OnTranslationRemovedListener listener) {
+        onTranslationRemovedListeners.add(listener);
+    }
+
+    /**
+     * Сообщить об удалении перевода
+     * @param translation удаленный перевод
+     */
+    private void fireTranslationRemoved(TranslationModel translation) {
+        for (OnTranslationRemovedListener listener : onTranslationRemovedListeners) {
+            listener.translationRemoved(translation);
         }
     }
 
@@ -83,6 +103,7 @@ public class TranslationsStorage {
 
         translations.add(translation);
         dbHelper.insertTranslation(translation);
+
         fireTranslationAdded(translation);
     }
 
@@ -95,6 +116,13 @@ public class TranslationsStorage {
         dbHelper.updateTranslation(translation);
 
         fireTranslationFavoriteSwitched(translation);
+    }
+
+    public void remove(TranslationModel translation) {
+        translations.remove(translation);
+        dbHelper.deleteTranslation(translation);
+
+        fireTranslationRemoved(translation);
     }
 
     /**
@@ -134,5 +162,9 @@ public class TranslationsStorage {
 
     public interface OnTranslationFavoriteSwitchedListener {
         void translationFavoriteSwitched(TranslationModel translation);
+    }
+
+    public interface OnTranslationRemovedListener {
+        void translationRemoved(TranslationModel translation);
     }
 }

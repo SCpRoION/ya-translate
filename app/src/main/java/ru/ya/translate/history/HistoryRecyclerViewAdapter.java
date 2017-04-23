@@ -1,7 +1,9 @@
 package ru.ya.translate.history;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,6 +21,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     private List<TranslationModel> translations;
     private OnFavoriteBtnClickedListener favoriteBtnClickedListener;
     private OnItemClickedListener itemClickedListener;
+    private int position;
 
     public void setData(List<TranslationModel> translations) {
         this.translations = new ArrayList<>();
@@ -41,6 +44,14 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         translations.add(i, translation);
 
         notifyDataSetChanged();
+    }
+
+    public void removeData(TranslationModel translation) {
+        if (translations.contains(translation)) {
+            translations.remove(translation);
+
+            notifyDataSetChanged();
+        }
     }
 
     public void setOnItemClickedListener(OnItemClickedListener listener) {
@@ -75,6 +86,10 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         if (favoriteBtnClickedListener != null) {
             holder.setOnFavoriteBtnClickedListener(favoriteBtnClickedListener);
         }
+        holder.rootContainer.setOnLongClickListener((v) -> {
+            setPosition(position);
+            return false;
+        });
     }
 
     @Override
@@ -82,7 +97,16 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         return translations.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public TranslationModel getCurrentTranslation() {
+        return translations.get(position);
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder
+                implements View.OnCreateContextMenuListener {
 
         LinearLayout     rootContainer;
         TextView         textFrom;
@@ -101,6 +125,8 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             setFavoriteBtn = (ImageView) view.findViewById(R.id.btn_set_favorite);
             setNotFavoriteBtn = (ImageView) view.findViewById(R.id.btn_set_not_favorite);
             languages = (TextView) view.findViewById(R.id.tv_languages);
+
+            view.setOnCreateContextMenuListener(this);
         }
 
         public void setOnFavoriteBtnClickedListener(OnFavoriteBtnClickedListener listener) {
@@ -114,6 +140,11 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
                 setFavoriteBtn.setVisibility(View.VISIBLE);
                 setNotFavoriteBtn.setVisibility(View.GONE);
             });
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(Menu.NONE, Menu.NONE, Menu.NONE, R.string.remove);
         }
     }
 
