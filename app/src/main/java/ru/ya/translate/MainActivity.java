@@ -13,6 +13,8 @@ import android.view.View;
 
 import ru.ya.translate.favorites.FavoritesFragment;
 import ru.ya.translate.history.HistoryFragment;
+import ru.ya.translate.translation.TranslationDatabaseHelper;
+import ru.ya.translate.translation.TranslationsStorage;
 import ru.ya.translate.translator.TranslatorFragment;
 
 public class MainActivity extends AppCompatActivity implements
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        // Инициализировать хранилище переводов
+        TranslationsStorage.init(this);
     }
 
     @Override

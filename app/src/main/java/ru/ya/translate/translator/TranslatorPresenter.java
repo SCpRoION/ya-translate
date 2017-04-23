@@ -3,8 +3,14 @@ package ru.ya.translate.translator;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import ru.ya.translate.BasePresenter;
 import ru.ya.translate.R;
+import ru.ya.translate.translation.TranslationDatabaseHelper;
+import ru.ya.translate.translation.TranslationModel;
+import ru.ya.translate.translation.TranslationsStorage;
 import ru.ya.translate.translator.api.TranslatorAPI;
 import ru.ya.translate.translator.api.TranslatorAPIManager;
 import rx.Observable;
@@ -20,6 +26,11 @@ public class TranslatorPresenter implements BasePresenter {
     private final TranslatorView view;          /** Представление переводчика */
     private String fromLanguageKey;             /** Исходный язык */
     private String toLanguageKey;               /** Язык перевода */
+
+    private TranslationModel lastTranslation;   /** Информация о последнем переводе */
+    private long lastTranslationTime;           /** Время последнего перевода */
+    private final long pauseBeforeSavingLastTranslation = 1000;   /** Временная пауза перед сохранением последнего
+                                                                      перевода при отсутствии изменений */
 
     private Subscription curSubscription;       /** Текущий подписчик перевода */
 
@@ -119,6 +130,12 @@ public class TranslatorPresenter implements BasePresenter {
      * @param s строка для перевода
      */
     private void translate(final String s) {
+        // Проверить, нужно ли сохранить последний перевод в историю
+        if (lastTranslation != null && System.currentTimeMillis() - lastTranslationTime >= pauseBeforeSavingLastTranslation) {
+            TranslationsStorage.getInstance().add(lastTranslation);
+            lastTranslation = null;
+        }
+
         // Отписать предыдущего подписчика, так как он ждет старый перевод
         if (curSubscription != null && !curSubscription.isUnsubscribed()) {
             curSubscription.unsubscribe();
@@ -133,10 +150,14 @@ public class TranslatorPresenter implements BasePresenter {
         // Подписаться на новый перевод
         curSubscription = translationObservable(s)
                 .subscribe(
-                        translation -> view.setTranslation(translation),
+                        translation -> {
+                            view.setTranslation(translation);
+                            lastTranslation = new TranslationModel(s, translation, fromLanguageKey, toLanguageKey);
+                            lastTranslationTime = System.currentTimeMillis();
+                        },
                         exception -> {
                             if (exception != null && exception.getMessage() != null) {
-                                Log.d("TRANSLATION", exception.getMessage());
+                                Log.e("TRANSLATION", exception.getMessage());
                             }
                         },
                         () -> {});
@@ -144,7 +165,7 @@ public class TranslatorPresenter implements BasePresenter {
 
     private Observable<String> translationObservable(String from) {
         return Observable.just(from)
-                .observeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
                 .map(str -> {
                     String res = null;
                     try {
@@ -154,6 +175,6 @@ public class TranslatorPresenter implements BasePresenter {
                     }
                     return res;
                 })
-                .subscribeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }
