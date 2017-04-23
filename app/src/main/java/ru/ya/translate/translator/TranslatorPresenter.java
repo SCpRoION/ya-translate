@@ -1,6 +1,7 @@
 package ru.ya.translate.translator;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Timer;
@@ -23,16 +24,13 @@ import rx.schedulers.Schedulers;
  */
 public class TranslatorPresenter implements BasePresenter {
 
-    private final TranslatorView view;          /** Представление переводчика */
-    private String fromLanguageKey;             /** Исходный язык */
-    private String toLanguageKey;               /** Язык перевода */
-
-    private TranslationModel lastTranslation;   /** Информация о последнем переводе */
-    private long lastTranslationTime;           /** Время последнего перевода */
-    private final long pauseBeforeSavingLastTranslation = 1000;   /** Временная пауза перед сохранением последнего
-                                                                      перевода при отсутствии изменений */
-
-    private Subscription curSubscription;       /** Текущий подписчик перевода */
+    private final TranslatorView view;                          /** Представление переводчика */
+    private String fromLanguageKey;                             /** Исходный язык */
+    private String toLanguageKey;                               /** Язык перевода */
+    private TranslationModel lastTranslation;                   /** Информация о последнем переводе */
+    private long lastTranslationTime;                           /** Время последнего перевода */
+    private final long pauseBeforeSavingLastTranslation = 1000; /** Временная пауза перед сохранением последнего перевода при отсутствии изменений */
+    private Subscription curSubscription;                       /** Текущий подписчик перевода */
 
     public TranslatorPresenter(TranslatorView view) {
         this.view = view;
@@ -52,8 +50,7 @@ public class TranslatorPresenter implements BasePresenter {
                 protected Void doInBackground(Void... params) {
                     try {
                         TranslatorAPIManager.getTranslationAPI().initialize();
-                    }
-                    catch(TranslatorAPI.APIException e) {
+                    } catch (TranslatorAPI.APIException e) {
                         exception = e;
                     }
 
@@ -91,6 +88,7 @@ public class TranslatorPresenter implements BasePresenter {
 
     /**
      * Изменен исходный язык
+     *
      * @param newLanguageKey ключ нового исходного языка
      */
     public void fromLanguageChangedTo(String newLanguageKey) {
@@ -100,6 +98,7 @@ public class TranslatorPresenter implements BasePresenter {
 
     /**
      * Изменен язык перевода
+     *
      * @param newLanguageKey ключ нового языка перевода
      */
     public void toLanguageChangedTo(String newLanguageKey) {
@@ -119,6 +118,7 @@ public class TranslatorPresenter implements BasePresenter {
 
     /**
      * Текст поля ввода был изменен
+     *
      * @param newText новый текст поля ввода
      */
     public void inputTextChanged(String newText) {
@@ -127,9 +127,13 @@ public class TranslatorPresenter implements BasePresenter {
 
     /**
      * Перевести строку
+     *
      * @param s строка для перевода
      */
     private void translate(final String s) {
+        // Удалим пустые пробелы в начале и в конце
+        final String trimmedS = s.trim();
+
         // Проверить, нужно ли сохранить последний перевод в историю
         if (lastTranslation != null && System.currentTimeMillis() - lastTranslationTime >= pauseBeforeSavingLastTranslation) {
             TranslationsStorage.getInstance().add(lastTranslation);
@@ -142,17 +146,17 @@ public class TranslatorPresenter implements BasePresenter {
         }
 
         // Если строка пустая, то переводить не надо
-        if (s == null || s.isEmpty()) {
+        if (TextUtils.isEmpty(trimmedS)) {
             view.setTranslation("");
             return;
         }
 
         // Подписаться на новый перевод
-        curSubscription = translationObservable(s)
+        curSubscription = translationObservable(trimmedS)
                 .subscribe(
                         translation -> {
                             view.setTranslation(translation);
-                            lastTranslation = new TranslationModel(s, translation, fromLanguageKey, toLanguageKey);
+                            lastTranslation = new TranslationModel(trimmedS, translation, fromLanguageKey, toLanguageKey);
                             lastTranslationTime = System.currentTimeMillis();
                         },
                         exception -> {
@@ -160,7 +164,8 @@ public class TranslatorPresenter implements BasePresenter {
                                 Log.e("TRANSLATION", exception.getMessage());
                             }
                         },
-                        () -> {});
+                        () -> {
+                        });
     }
 
     private Observable<String> translationObservable(String from) {

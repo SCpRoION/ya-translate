@@ -18,8 +18,7 @@ import ru.ya.translate.translation.TranslationsStorage;
 import ru.ya.translate.translator.TranslatorFragment;
 
 public class MainActivity extends AppCompatActivity implements
-        FavoritesFragment.OnListFragmentInteractionListener,
-        HistoryFragment.OnListFragmentInteractionListener{
+        FavoritesFragment.OnListFragmentInteractionListener{
 
     private SectionsPagerAdapter mSectionsPagerAdapter;  /** Адаптер фрагментов на каждый таб */
     private ViewPager mViewPager;                        /** Контейнер фрагментов */
@@ -39,11 +38,6 @@ public class MainActivity extends AppCompatActivity implements
 
         // Инициализировать хранилище переводов
         TranslationsStorage.init(this);
-    }
-
-    @Override
-    public void onListFragmentInteraction(ru.ya.translate.history.dummy.DummyContent.DummyItem item) {
-
     }
 
     @Override

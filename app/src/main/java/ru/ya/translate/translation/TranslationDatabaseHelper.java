@@ -98,12 +98,12 @@ public class TranslationDatabaseHelper extends SQLiteOpenHelper{
      * @return объект перевода
      */
     private TranslationModel translationFromCursor(Cursor cursor) {
-        int id =          cursor.getInt(0);
-        String textFrom = cursor.getString(1);
+        int id =             cursor.getInt   (0);
+        String textFrom =    cursor.getString(1);
         String translation = cursor.getString(2);
-        String fromLang = cursor.getString(3);
-        String toLang = cursor.getString(4);
-        boolean isFavorite = cursor.getInt(5) == 1;
+        String fromLang =    cursor.getString(3);
+        String toLang =      cursor.getString(4);
+        boolean isFavorite = cursor.getInt   (5) == 1;
 
         TranslationModel t  = new TranslationModel(id, textFrom, translation, fromLang, toLang, isFavorite);
         return t;

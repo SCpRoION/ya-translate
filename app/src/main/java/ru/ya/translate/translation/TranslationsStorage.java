@@ -11,6 +11,7 @@ public class TranslationsStorage {
 
     private final TranslationDatabaseHelper dbHelper;       /** Адаптер базы данных */
     private ArrayList<TranslationModel> translations;       /** История переводов */
+    private ArrayList<OnTranslationAddedListener> listeners;/** Слушатели события добавления нового перевода */
 
     private static TranslationsStorage instance;             /** Единственный экземпляр класса */
 
@@ -29,7 +30,26 @@ public class TranslationsStorage {
     private TranslationsStorage(Context context) {
         dbHelper = new TranslationDatabaseHelper(context);
         translations = new ArrayList<>();
+        listeners = new ArrayList<>();
         loadAll();
+    }
+
+    /**
+     * Добавить слушателя события добавления нового перевода
+     * @param listener слушатель
+     */
+    public void addOnTranslationAddedListener(OnTranslationAddedListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Сообщить о добавлении нового перевода
+     * @param translation
+     */
+    private void fireTranslationAdded(TranslationModel translation) {
+        for (OnTranslationAddedListener listener : listeners) {
+            listener.translationAdded(translation);
+        }
     }
 
     /**
@@ -43,6 +63,7 @@ public class TranslationsStorage {
 
         translations.add(translation);
         dbHelper.insertTranslation(translation);
+        fireTranslationAdded(translation);
     }
 
     /**
@@ -51,5 +72,17 @@ public class TranslationsStorage {
     public void loadAll() {
         translations = new ArrayList<>();
         translations.addAll(dbHelper.getAllTranslations());
+    }
+
+    /**
+     * Получить список текущих переводов в истории
+     * @return список текущих сохраненных переводов
+     */
+    public ArrayList<TranslationModel> getTranslations() {
+        return translations;
+    }
+
+    public interface OnTranslationAddedListener {
+        void translationAdded(TranslationModel translation);
     }
 }

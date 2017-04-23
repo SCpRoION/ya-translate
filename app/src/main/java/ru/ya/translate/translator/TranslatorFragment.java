@@ -20,13 +20,13 @@ import ru.ya.translate.languagelist.LanguageListActivity;
 public class TranslatorFragment extends Fragment implements TranslatorView, MainActivity.ContainsClickable {
 
     /** Ключи для используемых полей контейнеров */
-    public static String isLanguageFromBundleKey = "isLanguageFrom";
-    public static String newSelectedLanguageKeyBundleKey = "newSelectedLanguageKey";
-    public static String newSelectedLanguageTitleBundleKey = "newSelectedLanguageTitle";
-    private final String fromLanguageBundleKey = "fromLanguage";
-    private final String toLanguageBundleKey = "toLanguage";
-    private final String translatingStringBundleKey = "translatingString";
-    private final String translationStringBundleKey = "translationString";
+    public static String isLanguageFromBundleKey =              "isLanguageFrom";
+    public static String newSelectedLanguageKeyBundleKey =      "newSelectedLanguageKey";
+    public static String newSelectedLanguageTitleBundleKey =    "newSelectedLanguageTitle";
+    private final String fromLanguageBundleKey =                "fromLanguage";
+    private final String toLanguageBundleKey =                  "toLanguage";
+    private final String translatingStringBundleKey =           "translatingString";
+    private final String translationStringBundleKey =           "translationString";
 
     public static int newLanguageCheckResult = 0x02;/** Требуемый код результата при выборе нового языка оригинала/перевода */
 
